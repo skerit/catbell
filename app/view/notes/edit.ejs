@@ -1,0 +1,10 @@
+<% expands('layouts/body'); %>
+
+<% set_title(note.Note.title) %>
+
+<% start('main') %>
+<div class="toolbar">
+	<div id="wysiwyg-toolbar"></div>
+</div>
+<div class="note-doc" contentEditable="true"><%= note.Note.body %></div>
+<% end('main') %>

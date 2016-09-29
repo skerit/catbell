@@ -1,0 +1,11 @@
+<% expands('layouts/body'); %>
+
+<% start('main') %>
+<div class="toolbar">
+	<button class="btn-gtk note-create"><%= __('Create new note') %></button>
+	<input type="text" id="index-filter" placeholder="<%= __('Filter', {wrap: false}) %>">
+</div>
+<div class="row note-row-list">
+	<% assign('note-list') %>
+</div>
+<% end('main') %>

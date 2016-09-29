@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<% this.foundation({protoblast: true}) %>
+		<% style('website') %>
+		<% script([{path: 'jquery', name: 'jquery'}, 'website', 'tinymce/tinymce.min', 'tinymce.property']) %>
+	</head>
+	<body class="inline-editor">
+		<% assign('body') %>
+		<% this.bottom() %>
+	</body>
+</html>

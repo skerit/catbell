@@ -1,0 +1,27 @@
+<% expands('notes/index'); %>
+
+<% start('note-list', {className: 'note-list'}) %>
+<table class="table">
+	<thead>
+		<tr>
+			<th><%= __('Note') %></th>
+			<th><%= __('Modified') %></th>
+		</tr>
+	</thead>
+	<tbody>
+		<% note_list.forEach(function eachNote(note) { %>
+			<tr
+				data-id="<%= note._id %>"
+				data-width="<%= note.width %>"
+				data-height="<%= note.height %>"
+				data-x="<%= note.x %>"
+				data-y="<%= note.y %>"
+				data-update-event="<%= note._id %>"
+			>
+				<td><%= note.title %></td>
+				<td><%= note.last_change_date.format('D d M Y, H:i') %></td>
+			</tr>
+		<% }) %>
+	</tbody>
+</table>
+<% end('note-list') %>

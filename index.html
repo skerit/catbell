@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script>
+
+		document.write('<scri' + 'pt src="' + global.Blast.getClientPath() + '"></scr' + 'ipt>');
+		
+
+		// var viewRender = global.alchemy.hawkejs.createViewRender();
+		// viewRender.beginRender('layouts/body', function gotResponse(err, html) {
+		// 	//chrome.webRequest.onBeforeRequest.addListener(function(a, b){console.log(a, b)}, {urls: ['file://*']})
+		// 	//document.write(html);
+		// });
+
+		setTimeout(function() {
+			console.log('Chrome')
+			console.log(chrome);
+		}, 1000)
+	</script>
+
+	<title>Tutorialzine Node-Webkit Experiment</title>
+</head>
+<body>
+	<img src="http://www.develry.be"></img>
+	<div class="flipster">
+		<ul>
+			<!-- Tutorialzine's latest articles will show here -->
+		</ul>
+	</div>
+
+	<p class="stats"></p>
+</body>
+</html>

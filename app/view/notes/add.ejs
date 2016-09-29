@@ -1,0 +1,11 @@
+<% expands('layouts/body'); %>
+
+<% start('main') %>
+<div class="toolbar">
+	<div id="wysiwyg-toolbar"></div>
+</div>
+<div class="note-doc" contentEditable="true">
+	<h1>Note <%= note_count %></h1>
+	<br>
+</div>
+<% end('main') %>
