@@ -20,6 +20,12 @@ module.exports = {
 	// Use cookies
 	cookies: 'cookie_key_or_false_to_disable',
 
+	// Enable less support?
+	css_less: true,
+
+	// Enable sass support?
+	css_sass: false,
+
 	// Disable debugging
 	debug: false,
 
@@ -31,6 +37,9 @@ module.exports = {
 
 	// Don't allow access to the info page
 	info_page: false,
+
+	// Allow use of janeway
+	janeway: true,
 
 	// Extra import paths
 	less_import_paths: false,

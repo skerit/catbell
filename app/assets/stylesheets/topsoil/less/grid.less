@@ -1,0 +1,40 @@
+// Flexbox grid system
+//
+// Use these mixins to generate semantic grids
+
+// Turn the element into a flexbox parent
+.flexParent(@type: row; @alignment: space-between; @wrap: wrap) {
+	display: -webkit-flex;
+	display: flex;
+
+	-webkit-flex-flow: @type @wrap;
+	flex-flow: @type @wrap;
+
+	-webkit-justify-content: @alignment;
+	justify-content: @alignment;
+}
+
+// Turn the element into a flexbox child
+.flexChild(@type: 0 0 auto) {
+	-webkit-flex: @type;
+	flex: @type;
+}
+
+.flexClear(@order) {
+	&:after {
+		.flexChild(1 0 100%);
+		order: @order;
+		content: '';
+	}
+}
+
+// Create a flexbox row
+.row(@alignment: space-between, @wrap: wrap) {
+	.flexParent(row, @alignment, @wrap);
+}
+
+// Create a flexbox column child
+.col(@size: auto, @order: 0) {
+	order: @order;
+	.flexChild(0 0 @size);
+}

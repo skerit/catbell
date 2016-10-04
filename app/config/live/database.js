@@ -4,7 +4,7 @@ var libpath = require('path'),
 
 try {
 	electron = require('electron');
-	folder = lectron.app.getPath('userData');
+	folder = electron.app.getPath('userData');
 } catch (err) {
 	folder = 'nedb';
 }

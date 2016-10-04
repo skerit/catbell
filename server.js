@@ -22,24 +22,4 @@ process.on('uncaughtException', function(error) {
 
 alchemy.start(function onAlchemyReady() {
 
-	Model.get('Note').findById('57eaa4349fa487fc093b966b', function gotRecord(err, record) {
-
-		console.log('Got note:', err, record);
-
-	});
-
-	return;
-
-	Classes.Alchemy.Command.execute('Import', {importer: 'tomboy', path: PATH_TEMP + '/gnote/'}, function done(err) {
-
-		console.log('Import done:', err, this);
-
-	});
-
 });
-
-return;
-
-var c = new Classes.Alchemy.ElectronConduit({method: 'GET', url: 'alc:///'}, function(err, res) {
-	console.log(err, res);
-})

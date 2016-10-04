@@ -23,6 +23,9 @@ process.on('uncaughtException', function onException(error) {
 // Start alchemy
 require('alchemymvc');
 
+// Don't use mmmagic
+alchemy.use(null, 'mmmagic');
+
 if (alchemy.settings.environment == 'dev') {
 	app.setPath('userData', libpath.resolve(app.getPath('appData'), 'catbell_dev'));
 }

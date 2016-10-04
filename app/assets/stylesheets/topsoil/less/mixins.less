@@ -1,0 +1,28 @@
+.filter(@value) {
+	filter: @value;
+	-webkit-filter: @value;
+}
+
+// Backgrounds
+.bg-variant(@color) {
+	background-color: @color;
+
+	a&:hover {
+		background-color: darken(@color, 10%);
+	}
+}
+
+// Typography
+.text-emphasis-variant(@color) {
+	color: @color;
+
+	a&:hover,
+	a&:active,
+	a&:focus,
+	button&:hover,
+	button&:active,
+	button&:focus {
+		color: @color;
+		opacity: .75;
+	}
+}

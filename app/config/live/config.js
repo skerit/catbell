@@ -11,7 +11,22 @@
  * @license     http://www.opensource.org/licenses/mit-license.php MIT License
  */
 module.exports = {
+
+	// Disable debug
 	debug: false,
+
+	// Enable hawkejs client
 	hawkejs_client: true,
-	log_trace: false
+
+	// Don't do expensive log traces
+	log_trace: false,
+
+	// Don't start janeway
+	janeway: false,
+
+	// Disable CSS minification
+	minify_css: false,
+
+	// Disable JS minification
+	minify_js: false
 };
