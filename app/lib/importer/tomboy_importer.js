@@ -104,24 +104,28 @@ TomboyImporter.setMethod(function start(command, payload, callback) {
 						}
 
 						// Replace tomboy specific tags
-						body = body.replace(/<\/?(bold).*?>/g, 'b');
-						body = body.replace(/<\/?(bold).*?>/g, 'b');
-						body = body.replace(/<\/?(italic).*?>/g, 'i');
-						body = body.replace(/<\/?(underline).*?>/g, 'u');
-						body = body.replace(/<\/?(strikethrough).*?>/g, 's');
-						body = body.replace(/<\/?(list).*?>/g, 'ul');
-						body = body.replace(/<\/?(list-item).*?>/g, 'li');
+						body = body.replace(/(<\/?)(bold)(.*?>)/g, '$1b$3');
+						body = body.replace(/(<\/?)(bold)(.*?>)/g, '$1b$3');
+						body = body.replace(/(<\/?)(italic)(.*?>)/g, '$1i$3');
+						body = body.replace(/(<\/?)(underline)(.*?>)/g, '$1u$3');
+						body = body.replace(/(<\/?)(strikethrough)(.*?>)/g, '$1s$3');
 
-						body = body.replace(/<(highlight).*?>/g, 'span style="background-color: rgb(255, 255, 0);"');
-						body = body.replace(/<\/(strikethrough).*?>/g, 'span');
+						// Replace "list-item" first
+						body = body.replace(/(<\/?)(list-item)(.*?>)/g, '$1li$3');
 
-						body = body.replace(/<(size\:small).*?>/g, 'span style="font-size:10px;"');
-						body = body.replace(/<(size\:large).*?>/g, 'span style="font-size:15px;"');
-						body = body.replace(/<(size\:huge).*?>/g, 'span style="font-size:17px;"');
+						// Then do "list" elements
+						body = body.replace(/(<\/?)(list)(.*?>)/g, '$1ul$3');
 
-						body = body.replace(/<\/(size\:small).*?>/g, 'span');
-						body = body.replace(/<\/(size\:large).*?>/g, 'span');
-						body = body.replace(/<\/(size\:huge).*?>/g, 'span');
+						body = body.replace(/(<)(highlight)(.*?>)/g, '$1span style="background-color: rgb(255, 255, 0);"$3');
+						body = body.replace(/(<\/)(strikethrough)(.*?>)/g, '$1span$3');
+
+						body = body.replace(/(<)(size\:small)(.*?>)/g, '$1span style="font-size:10px;"$3');
+						body = body.replace(/(<)(size\:large)(.*?>)/g, '$1span style="font-size:20px;"$3');
+						body = body.replace(/(<)(size\:huge)(.*?>)/g, '$1span style="font-size:26px;"$3');
+
+						body = body.replace(/(<\/)(size\:small)(.*?>)/g, '$1span$3');
+						body = body.replace(/(<\/)(size\:large)(.*?>)/g, '$1span$3');
+						body = body.replace(/(<\/)(size\:huge)(.*?>)/g, '$1span$3');
 
 						data = {
 							title    : $('title').text(),

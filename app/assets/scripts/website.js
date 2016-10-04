@@ -1,12 +1,21 @@
+var electron = require('electron').remote,
+    filter_text,
+    selected = [];
+
 hawkejs.scene.on({type: 'set', name: 'main', template: 'notes/index'}, function onIndex(el) {
 
-	var $el = $(el),
-	    selected = [];
+	var $el = $(el);
 
 	// Create a new note
-	$('.note-create', $el).on('click', function onClickCreate(e) {
-		var strWindowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no,width=780,height=600";
+	$('button.note-create', $el).on('click', function onClickCreate(e) {
+		var strWindowFeatures = "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no,width=741,height=600";
 		var windowObjectReference = window.open('/add', 'Notes', strWindowFeatures);
+	});
+
+	// Open settings window
+	$('button.settings', $el).on('click', function onClickSettings(e) {
+		var strWindowFeatures = "menubar=no,location=no,resizable=no,scrollbars=yes,status=no,width=780,height=200";
+		var windowObjectReference = window.open('/settings', 'Settings', strWindowFeatures);
 	});
 
 	// Select a note in the index list
@@ -72,17 +81,69 @@ hawkejs.scene.on({type: 'set', name: 'main', template: 'notes/index'}, function 
 
 	// Re-create the index list?
 	alchemy.on('savedNote', function onSavedNote(e) {
-		console.log('Should recreate index list');
+		hawkejs.scene.openUrl('/notes', {get: {filter: filter_text}}, function done(err) {
+
+			var $element,
+			    id,
+			    i;
+
+			if (err) {
+				throw err;
+			}
+
+			// Select all the previously selected rows
+			for (i = 0; i < selected.length; i++) {
+				id = selected[i];
+				$element = $('tr[data-id="' + id + '"]');
+				$element.addClass('selected');
+			}
+		});
 	});
 
 	// Listen to filter changes
 	$('#index-filter').on('keyup', Function.throttle(function onPress(e) {
 
-		var filter_text = this.value;
+		filter_text = this.value;
 
-
+		hawkejs.scene.openUrl('/notes', {get: {filter: filter_text}});
 
 	}, 550));
+});
+
+hawkejs.scene.on({type: 'set', name: 'main', template: 'settings/index'}, function onSettings(el) {
+
+	var $progress = $('.import-progress');
+
+	alchemy.on('import-update', function gotUpdate(report) {
+
+		$progress.show();
+
+		console.log('IU:', report.percentage);
+
+		$progress.val(report.percentage);
+	});
+
+	$('.import-notes').on('click', function onClick(e) {
+
+		var options;
+
+		options = {
+			title       : 'Select directory to import',
+			buttonLabel : 'Start import',
+			properties  : ['openDirectory', 'showHiddenFiles'],
+			defaultPath : electron.app.getPath('home') + '/.local/share'
+		};
+
+		electron.dialog.showOpenDialog(options, function closed(selections) {
+
+			if (!selections) {
+				return;
+			}
+
+			hawkejs.scene.fetch('/settings/import', {post: {path: selections[0], scene_id: hawkejs.scene.sceneId}});
+		});
+	});
+
 });
 
 hawkejs.scene.on({type: 'set', name: 'main', template: 'notes/add'}, addNoteListener);
@@ -143,7 +204,7 @@ function addNoteListener(el, vars, view_render) {
 			auto_focus: 'mce_0',
 			inline: true,
 			plugins: 'paste link table textcolor property media image imagetools',
-			toolbar: 'undo redo | styleselect | table | forecolor backcolor | bold italic underline | alignleft aligncenter alignright | bullist numlist | indent outdent | link | property',
+			toolbar: 'undo redo | styleselect | table | forecolor backcolor | bold italic underline | alignleft aligncenter alignright | bullist numlist | indent outdent | link', // | property
 			// New links should open in a new window
 			default_link_target: '_blank',
 			automatic_uploads: true,
@@ -235,7 +296,6 @@ function addNoteListener(el, vars, view_render) {
 
 	// Save the note on resize
 	window.addEventListener('resize', Function.throttle(function onResize(e) {
-		console.log('Saving after resize');
 		saveNote();
 	}, 1000));
 }

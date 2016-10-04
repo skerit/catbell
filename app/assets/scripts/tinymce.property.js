@@ -57,8 +57,26 @@ tinymce.PluginManager.add('property', function(editor) {
 	}
 
 	function showDialog(linkList) {
-		var data = {}, selection = editor.selection, dom = editor.dom, selectedElm, anchorElm, initialText;
-		var win, onlyText, textListCtrl, linkListCtrl, relListCtrl, targetListCtrl, classListCtrl, linkTitleCtrl, value;
+
+		var targetListCtrl,
+		    classListCtrl,
+		    linkTitleCtrl,
+		    textListCtrl,
+		    linkListCtrl,
+		    relListCtrl,
+		    initialText,
+		    propertyElm,
+		    selectedElm,
+		    selection,
+		    onlyText,
+		    value,
+		    data,
+		    dom,
+		    win;
+
+		selection = editor.selection;
+		data = {};
+		dom = editor.dom;
 
 		function linkListChangeHandler(e) {
 			var textCtrl = win.find('#text');
@@ -120,7 +138,7 @@ tinymce.PluginManager.add('property', function(editor) {
 			}
 		}
 
-		function isOnlyTextSelected(anchorElm) {
+		function isOnlyTextSelected(propertyElm) {
 			var html = selection.getContent();
 
 			// Partial html and not a fully selected anchor element
@@ -128,8 +146,8 @@ tinymce.PluginManager.add('property', function(editor) {
 				return false;
 			}
 
-			if (anchorElm) {
-				var nodes = anchorElm.childNodes, i;
+			if (propertyElm) {
+				var nodes = propertyElm.childNodes, i;
 
 				if (nodes.length === 0) {
 					return false;
@@ -146,27 +164,18 @@ tinymce.PluginManager.add('property', function(editor) {
 		}
 
 		selectedElm = selection.getNode();
-		anchorElm = dom.getParent(selectedElm, 'a[href]');
+		propertyElm = dom.getParent(selectedElm, 'span[data-property]');
 		onlyText = isOnlyTextSelected();
 
-		data.text = initialText = anchorElm ? (anchorElm.innerText || anchorElm.textContent) : selection.getContent({format: 'text'});
-		data.href = anchorElm ? dom.getAttrib(anchorElm, 'href') : '';
+		data.text = initialText = propertyElm ? (propertyElm.innerText || propertyElm.textContent) : selection.getContent({format: 'text'});
+		data.property = propertyElm ? dom.getAttrib(propertyElm, 'data-property') : '';
+		data.value = propertyElm ? dom.getAttrib(propertyElm, 'data-value') : '';
 
-		if (anchorElm) {
-			data.target = dom.getAttrib(anchorElm, 'target');
-		} else if (editor.settings.default_link_target) {
-			data.target = editor.settings.default_link_target;
-		}
-
-		if ((value = dom.getAttrib(anchorElm, 'rel'))) {
-			data.rel = value;
-		}
-
-		if ((value = dom.getAttrib(anchorElm, 'class'))) {
+		if ((value = dom.getAttrib(propertyElm, 'class'))) {
 			data['class'] = value;
 		}
 
-		if ((value = dom.getAttrib(anchorElm, 'title'))) {
+		if ((value = dom.getAttrib(propertyElm, 'title'))) {
 			data.title = value;
 		}
 
@@ -276,11 +285,14 @@ tinymce.PluginManager.add('property', function(editor) {
 				targetListCtrl,
 				classListCtrl
 			],
-			onSubmit: function(e) {
+			onSubmit: function onSubmit(e) {
 				/*eslint dot-notation: 0*/
 				var href;
 
 				data = tinymce.extend(data, e.data);
+
+				console.log('Submit:', data);
+
 				href = data.href;
 
 				// Delay confirm since onSubmit will move focus
@@ -295,78 +307,54 @@ tinymce.PluginManager.add('property', function(editor) {
 					});
 				}
 
-				function insertLink() {
-					var linkAttrs = {
-						href: href,
-						target: data.target ? data.target : null,
-						rel: data.rel ? data.rel : null,
-						"class": data["class"] ? data["class"] : null,
-						title: data.title ? data.title : null
+				/**
+				 * Function that actually inserts the element into the editor
+				 */
+				function insertElement() {
+
+					var attr;
+
+					if (data.property == null) {
+						data.property = '';
+					}
+
+					if (data.value == null) {
+						data.value = '';
+					}
+
+					attr = {
+						"class"   : data["class"] ? data["class"] : null,
+						title     : data.title ? data.title : null,
+						'data-property'  : data.property,
+						'data-value'     : data.value
 					};
 
-					if (anchorElm) {
+					if (propertyElm) {
 						editor.focus();
 
 						if (onlyText && data.text != initialText) {
-							if ("innerText" in anchorElm) {
-								anchorElm.innerText = data.text;
+							if ("innerText" in propertyElm) {
+								propertyElm.innerText = data.text;
 							} else {
-								anchorElm.textContent = data.text;
+								propertyElm.textContent = data.text;
 							}
 						}
 
-						dom.setAttribs(anchorElm, linkAttrs);
+						console.log('Setting proeprties', propertyElm);
 
-						selection.select(anchorElm);
+						dom.setAttribs(propertyElm, attr);
+
+						propertyElm.setAttribute('data-property', data.property);
+						propertyElm.setAttribute('data-value', data.value);
+
+						selection.select(propertyElm);
 						editor.undoManager.add();
 					} else {
-						if (onlyText) {
-							editor.insertContent(dom.createHTML('a', linkAttrs, dom.encode(data.text)));
-						} else {
-							editor.execCommand('mceInsertLink', false, linkAttrs);
-						}
+						editor.insertContent(dom.createHTML('span', attr, dom.encode(data.text)));
 					}
 				}
 
-				if (!href) {
-					editor.execCommand('unlink');
-					return;
-				}
-
-				// Is email and not //user@domain.com
-				if (href.indexOf('@') > 0 && href.indexOf('//') == -1 && href.indexOf('mailto:') == -1) {
-					delayedConfirm(
-						'The URL you entered seems to be an email address. Do you want to add the required mailto: prefix?',
-						function(state) {
-							if (state) {
-								href = 'mailto:' + href;
-							}
-
-							insertLink();
-						}
-					);
-
-					return;
-				}
-
-				// Is not protocol prefixed
-				if ((editor.settings.link_assume_external_targets && !/^\w+:/i.test(href)) ||
-					(!editor.settings.link_assume_external_targets && /^\s*www[\.|\d\.]/i.test(href))) {
-					delayedConfirm(
-						'The URL you entered seems to be an external link. Do you want to add the required http:// prefix?',
-						function(state) {
-							if (state) {
-								href = 'http://' + href;
-							}
-
-							insertLink();
-						}
-					);
-
-					return;
-				}
-
-				insertLink();
+				insertElement();
 			}
 		});
 	}
@@ -376,7 +364,7 @@ tinymce.PluginManager.add('property', function(editor) {
 		tooltip: 'Manage property value',
 		shortcut: 'Meta+K',
 		onclick: createLinkList(showDialog),
-		stateSelector: 'a[href]'
+		stateSelector: 'span[data-property]'
 	});
 
 	// editor.addButton('unlink', {
@@ -396,7 +384,7 @@ tinymce.PluginManager.add('property', function(editor) {
 		text: 'Manage property value',
 		shortcut: 'Meta+K',
 		onclick: createLinkList(showDialog),
-		stateSelector: 'a[href]',
+		stateSelector: 'span[data-property]',
 		context: 'insert',
 		prependToContext: true
 	});

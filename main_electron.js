@@ -55,48 +55,20 @@ Function.parallel(false, function startAlchemy(next) {
 
 	local_url = 'http://localhost:' + alchemy.settings.port + '/';
 
-	// Currently doesn't support setting headers, unfortunately
-	protocol.registerBufferProtocol('b_alc', function onAlchemyRequest(request, callback) {
-		//var url = request.url.substr(7);
-		console.log('Alchemy request:', request);
-		Router.resolveElectron(request, callback);
-		
-		//callback({path: path.normalize(__dirname + '/' + url)});
-	}, function onProtocolError(error) {
-		if (error)
-		console.error('Failed to register protocol')
-	});
-
-	protocol.registerHttpProtocol('alc', function onAlchemyHttpRequest(request, callback) {
-
-		var originalUrl = request.url,
-		    url;
-
-		url = originalUrl.replace('alc:///', 'http://localhost:3000/');
-		url = url.replace('alc://', 'http://localhost:3000/');
-		url = url.replace('alc:/', 'http://localhost:3000/');
-
-		//console.log('Redirecting request', request, 'to', url);
-
-		request.url = url;
-		callback(request);
-	});
-
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
 		width              : 800,
 		height             : 600,
 		title              : 'Catbell notes',
-		'node-integration' : false,
+		'node-integration' : true,
 		icon               : libpath.resolve(PATH_APP, 'assets', 'images', 'oxygen_note.png')
 	});
 
 	// and load the index.html of the app.
-	//mainWindow.loadURL('alc:///');
 	mainWindow.loadURL(local_url + 'notes');
 
 	// Open the DevTools.
-	mainWindow.webContents.openDevTools();
+	//mainWindow.webContents.openDevTools();
 
 	// Emitted when the window is closed.
 	mainWindow.on('closed', function() {

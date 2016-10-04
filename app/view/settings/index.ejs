@@ -1,0 +1,13 @@
+<% expands('layouts/body'); %>
+
+<% start('main') %>
+<div class="settings-overview">
+	<table>
+		<tr>
+			<td><%= __('Import Gnote/Tomboy notes') %></td>
+			<td><button class="btn-gtk import-notes"><%= __('Import directory') %></button></td>
+			<td class="progress-wrap"><progress class="import-progress" max="100" style="display: none;"></progress></td>
+		</tr>
+	</table>
+</div>
+<% end('main') %>

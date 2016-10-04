@@ -1,4 +1,5 @@
 var doubleMetaphone = alchemy.use('double-metaphone'),
+    electron = require('electron'),
     cheerio = alchemy.use('cheerio');
 
 /**
@@ -27,7 +28,7 @@ var Note = Function.inherits('Alchemy.AppController', function NoteController(co
 Note.setMethod(function index(conduit) {
 
 	var that = this,
-	    options;
+	    options,
 	    fields = ['_id', 'title', 'width', 'height', 'x', 'y', 'last_change_date'],
 	    Note = this.getModel('Note');
 
@@ -45,8 +46,6 @@ Note.setMethod(function index(conduit) {
 		if (err) {
 			return conduit.error(err);
 		}
-
-		console.log('List:', list, JSON.clone(list));
 
 		that.set('note_list', list);
 
@@ -140,8 +139,6 @@ Note.setMethod(function save(conduit) {
 	var that = this,
 	    Note = this.getModel('Note'),
 	    body = conduit.body;
-
-	console.log('Saving note...', conduit, conduit.body);
 
 	if (body.note_id) {
 		Note.findById(body.note_id, function gotNote(err, note) {

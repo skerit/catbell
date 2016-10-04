@@ -2,8 +2,9 @@
 
 <% start('main') %>
 <div class="toolbar">
-	<button class="btn-gtk note-create"><%= __('Create new note') %></button>
+	<button class="btn-gtk note-create"><i class="fa fa-plus" aria-hidden="true"></i> <%= __('Create new note') %></button>
 	<input type="text" id="index-filter" placeholder="<%= __('Filter', {wrap: false}) %>">
+	<button class="btn-gtk settings"><i class="fa fa-cog" aria-hidden="true"></i></button>
 </div>
 <div class="row note-row-list">
 	<% assign('note-list') %>

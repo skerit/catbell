@@ -43,8 +43,6 @@ var Note = Function.inherits('Alchemy.AppModel', function NoteModel(options) {
 		// Get the inner text only
 		main.text = text.decodeHTML().replace(/\n+/g, '\n').trim();
 		main.metaphone = getMetaphoneText(main.text);
-
-		console.log('Got:', main);
 	});
 });
 
@@ -122,7 +120,7 @@ Note.setMethod(function scoredFind(options, callback) {
 		}
 
 		f_opts = {
-			conditions: {text: RegExp.interpret(filter)},
+			conditions: {text: RegExp.interpret(filter, 'ig')},
 			fields: options.fields
 		};
 
@@ -138,7 +136,7 @@ Note.setMethod(function scoredFind(options, callback) {
 	}, function metaContain(next) {
 
 		var f_opts = {
-			conditions: {metaphone: RegExp.interpret(metaphone)},
+			conditions: {metaphone: RegExp.interpret(metaphone, 'ig')},
 			fields: options.fields
 		};
 
@@ -156,7 +154,8 @@ Note.setMethod(function scoredFind(options, callback) {
 
 		var pieces = metaphone.split(/ /g),
 		    f_opts = {fields: options.fields},
-		    searches = [];
+		    searches = [],
+		    $or = [];
 
 		pieces.forEach(function eachPiece(piece) {
 
@@ -164,11 +163,15 @@ Note.setMethod(function scoredFind(options, callback) {
 				return;
 			}
 
-			searches.push(RegExp.interpret(piece));
+			searches.push(RegExp.interpret(piece, 'ig'));
+		});
+
+		searches.forEach(function eachSearch(piece) {
+			$or.push({metaphone: piece});
 		});
 
 		f_opts.conditions = {
-			metaphone : searches
+			$or: $or
 		};
 
 		that.find('dict', f_opts, function gotDict(err, dict) {
@@ -186,10 +189,10 @@ Note.setMethod(function scoredFind(options, callback) {
 			return callback(err);
 		}
 
+		results = Object.values(results);
+
 		// Sort results by score
 		results.sortByPath('score');
-
-		console.log('Dict result:', results);
 
 		callback(null, Object.values(results));
 	});
@@ -202,6 +205,7 @@ Note.setMethod(function scoredFind(options, callback) {
 		for (key in dict) {
 			if (!results[key]) {
 				record = dict[key];
+				record._id = key;
 				record.score = 0;
 				results[key] = record;
 			} else {

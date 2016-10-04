@@ -1,5 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,400italic,500,500italic,700,700italic);
 @import "topsoil/less/topsoil";
+@import "fontawesome/font-awesome.less";
 
 @color-titlebar-inactive: #3C3B37;
 @color-text: #4C4C4C;
@@ -42,6 +43,26 @@ body {
 	color: @color-text;
 }
 
+[data-template="settings/index"] {
+	background-color: @color-chrome-bg;
+
+	table {
+		width: 100%;
+
+		td {
+			padding: 1rem;
+		}
+	}
+
+	.progress-wrap {
+		min-width: 200px;
+
+		progress {
+			width: 100%;
+		}
+	}
+}
+
 .table thead th {
 	font-weight: normal;
 }
@@ -72,7 +93,6 @@ input[type="text"] {
 }
 
 ::-webkit-scrollbar {
-	width: 7px;
 
 	&:hover {
 		background-color: rgba(0, 0, 0, 0.09);
