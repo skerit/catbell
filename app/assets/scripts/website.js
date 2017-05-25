@@ -211,10 +211,7 @@ function addNoteListener(el, vars, view_render) {
 			default_link_target: '_blank',
 			automatic_uploads: true,
 			verify_html : false,
-			protect: [
-				/[\n\f\r\t\v]/gm,
-				/\t/gm
-			],
+			whitespace_elements : 'pre script noscript style textarea video audio iframe object code div main section a p th tr td li ol ul caption dl dt dd noscript menu',
 
 			// Allow data:url images
 			paste_data_images: true,
