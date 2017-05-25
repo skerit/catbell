@@ -34,3 +34,6 @@ scratch*
 
 # Ignore the local settings file
 app/config/local.js
+
+build/
+dist/

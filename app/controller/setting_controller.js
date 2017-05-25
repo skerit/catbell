@@ -41,7 +41,7 @@ Setting.setMethod(function importDir(conduit) {
 
 	var that = this,
 	    scene_id = conduit.param('scene_id'),
-	    session = conduit.createSession(),
+	    session = conduit.getSession(),
 	    scene = session.connections[scene_id],
 	    path = conduit.param('path'),
 	    cmd;

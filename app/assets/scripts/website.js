@@ -58,7 +58,7 @@ hawkejs.scene.on({type: 'set', name: 'main', template: 'notes/index'}, function 
 			window_features += ',top=' + y;
 		}
 
-		window_ref = window.open('/edit/' + id, 'Notes', window_features);
+		window_ref = window.open('/edit/' + id, 'Note ' + id, window_features);
 	});
 
 	// Update note data
@@ -208,6 +208,11 @@ function addNoteListener(el, vars, view_render) {
 			// New links should open in a new window
 			default_link_target: '_blank',
 			automatic_uploads: true,
+			verify_html : false,
+			protect: [
+				/[\n\f\r\t\v]/gm,
+				/\t/gm
+			],
 
 			// Allow data:url images
 			paste_data_images: true,
@@ -220,6 +225,28 @@ function addNoteListener(el, vars, view_render) {
 				});
 			}
 		});
+	});
+
+	$el.on('keydown', function onKeydown(e) {
+
+		if (e.keyCode == 9) {
+
+			var editor = $el[0];
+			var doc = editor.ownerDocument.defaultView;
+			var sel = doc.getSelection();
+			var range = sel.getRangeAt(0);
+
+			var tabNode = document.createTextNode("\t");
+			range.insertNode(tabNode);
+
+			range.setStartAfter(tabNode);
+			range.setEndAfter(tabNode); 
+			sel.removeAllRanges();
+			sel.addRange(range);
+
+			e.preventDefault();
+		}
+
 	});
 
 	// Listen to input events, meaning the note changed

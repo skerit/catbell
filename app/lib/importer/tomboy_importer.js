@@ -144,12 +144,20 @@ TomboyImporter.setMethod(function start(command, payload, callback) {
 
 						h1_title = '<h1>' + data.title + '</h1>';
 
+						// If there are tabs, wrap everything in a pre tag
+						if (data.body.indexOf('\t') > -1) {
+							data.body = '<pre>' + data.body + '</pre>';
+						}
+
 						// Make sure the title is an h1
 						if (data.body.indexOf(data.title) == 0) {
-							data.body = h1_title + data.body.slice(data.title.length).replace(/\n/g, '<br>\n');
+							data.body = h1_title + data.body.slice(data.title.length).replace(/\n/g, '<br>');
 						} else {
-							data.body = h1_title + '\n' + data.body.replace(/\n/g, '<br>\n');
+							data.body = h1_title + data.body.replace(/\n/g, '<br>');
 						}
+
+						data.body = data.body.replace(/\<\/h1>\<br\>\<br\>/g, '</h1><br>');
+						data.body = data.body.replace(/\t/g, '&#09;');
 
 						Note.find('first', {conditions: {title: data.title}}, function gotNote(err, record) {
 
