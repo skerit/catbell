@@ -194,7 +194,9 @@ function addNoteListener(el, vars, view_render) {
 	save_url = hawkejs.scene.helpers.Router.routeUrl('Note#save');
 
 	// Make sure tinymce has loaded
-	hawkejs.require('tinymce/tinymce.min', function gotTinyMce() {
+	hawkejs.require('tinymce/tinymce', function gotTinyMce() {
+
+		console.log('Initing v6');
 
 		// Initialize tinymce
 		tinymce.init({
