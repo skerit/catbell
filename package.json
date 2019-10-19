@@ -6,7 +6,7 @@
 	"author": "Jelle De Loecker <jelle@develry.be>",
 	"main": "main_electron.js",
 	"dependencies": {
-		"alchemymvc": "~0.3.0",
+		"alchemymvc": "~1.0.1",
 		"alchemy-i18n": "~0.3.0",
 		"alchemy-ds-nedb": "~0.3.0",
 		"cheerio": "~0.22.0",
